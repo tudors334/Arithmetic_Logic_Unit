@@ -1,0 +1,19 @@
+project compileall
+vsim work.tb_alu_top
+
+add wave -divider "CONTROL"
+add wave /tb_alu_top/CLK
+add wave /tb_alu_top/START
+add wave -radix unsigned /tb_alu_top/OP
+add wave /tb_alu_top/DONE
+
+add wave -divider "I/O"
+add wave -radix unsigned /tb_alu_top/A
+add wave -radix unsigned /tb_alu_top/B
+add wave -radix unsigned /tb_alu_top/RESULT
+add wave -radix unsigned /tb_alu_top/REST
+add wave /tb_alu_top/DIV_ZERO
+
+wave zoom full
+
+run -all
