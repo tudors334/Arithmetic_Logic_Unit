@@ -80,11 +80,11 @@ module restoring_divider_v2 (
                     end else begin
                         // ---- Phase 1: subtract / restore ----
                         if (!trial_borrow) begin
-                            // R >= D: keep result, quotient bit = 1
+                            // R >= D: cat bit = 1
                             R_reg    <= trial_diff;
                             Q_reg[0] <= 1'b1;
                         end else begin
-                            // R < D: restore, quotient bit = 0
+                            // R < D: restore, cat bit = 0
                             R_reg    <= restore_sum;
                             Q_reg[0] <= 1'b0;
                         end
