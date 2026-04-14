@@ -31,13 +31,13 @@ module control_unit (
     input  wire [1:0]  OP,
     input  wire        MUL_RES,
     input  wire        DIV_RES,
-    output reg         LOADX,
-    output reg         LOADY,
-    output reg         EN_SUM,
-    output reg         EN_SUB,
-    output reg         EN_MULT,
-    output reg         EN_DIV,
-    output reg         DONE
+    output wire        LOADX,
+    output wire        LOADY,
+    output wire        EN_SUM,
+    output wire        EN_SUB,
+    output wire        EN_MULT,
+    output wire        EN_DIV,
+    output wire        DONE
 );
     localparam OP_ADD = 2'b00;
     localparam OP_SUB = 2'b01;
@@ -52,67 +52,37 @@ module control_unit (
         S_WAIT_DIV  = 3'd4,
         S_DONE      = 3'd5;
 
-    reg [2:0] state;
-    reg [1:0] op_reg;
+    wire [2:0] state_q;
+    wire [2:0] state_next;
+    reg_en #(.W(3)) state_reg (
+        .CLK(CLK), .RST(RST), .EN(1'b1),
+        .D(state_next), .Q(state_q)
+    );
 
-    always @(posedge CLK) begin
-        if (RST) begin
-            state   <= S_IDLE;
-            op_reg  <= 2'b00;
-            LOADX   <= 1'b0;
-            LOADY   <= 1'b0;
-            EN_SUM  <= 1'b0;
-            EN_SUB  <= 1'b0;
-            EN_MULT <= 1'b0;
-            EN_DIV  <= 1'b0;
-            DONE    <= 1'b0;
-        end else begin
-            LOADX   <= 1'b0;
-            LOADY   <= 1'b0;
-            EN_SUM  <= 1'b0;
-            EN_SUB  <= 1'b0;
-            EN_MULT <= 1'b0;
-            EN_DIV  <= 1'b0;
-            DONE    <= 1'b0;
+    wire [1:0] op_q;
+    wire [1:0] op_next;
+    reg_en #(.W(2)) op_reg (
+        .CLK(CLK), .RST(RST), .EN(1'b1),
+        .D(op_next), .Q(op_q)
+    );
 
-            case (state)
-                S_IDLE: begin
-                    if (START) begin
-                        op_reg <= OP;
-                        state  <= S_LOAD;
-                    end
-                end
+    assign op_next = (state_q == S_IDLE && START) ? OP : op_q;
 
-                S_LOAD: begin
-                    LOADX <= 1'b1;
-                    LOADY <= 1'b1;
-                    state <= S_EXECUTE;
-                end
+    assign state_next =
+        (state_q == S_IDLE)     ? (START ? S_LOAD : S_IDLE) :
+        (state_q == S_LOAD)     ? S_EXECUTE :
+        (state_q == S_EXECUTE)  ? ((op_q == OP_ADD || op_q == OP_SUB) ? S_DONE :
+                                  (op_q == OP_MUL ? S_WAIT_MUL : S_WAIT_DIV)) :
+        (state_q == S_WAIT_MUL) ? (MUL_RES ? S_DONE : S_WAIT_MUL) :
+        (state_q == S_WAIT_DIV) ? (DIV_RES ? S_DONE : S_WAIT_DIV) :
+        (state_q == S_DONE)     ? S_IDLE :
+        S_IDLE;
 
-                S_EXECUTE: begin
-                    case (op_reg)
-                        OP_ADD: begin EN_SUM  <= 1'b1; state <= S_DONE;     end
-                        OP_SUB: begin EN_SUB  <= 1'b1; state <= S_DONE;     end
-                        OP_MUL: begin EN_MULT <= 1'b1; state <= S_WAIT_MUL; end
-                        OP_DIV: begin EN_DIV  <= 1'b1; state <= S_WAIT_DIV; end
-                    endcase
-                end
-
-                S_WAIT_MUL: begin
-                    if (MUL_RES) state <= S_DONE;
-                end
-
-                S_WAIT_DIV: begin
-                    if (DIV_RES) state <= S_DONE;
-                end
-
-                S_DONE: begin
-                    DONE  <= 1'b1;
-                    state <= S_IDLE;
-                end
-
-                default: state <= S_IDLE;
-            endcase
-        end
-    end
+    assign LOADX   = (state_q == S_LOAD);
+    assign LOADY   = (state_q == S_LOAD);
+    assign EN_SUM  = (state_q == S_EXECUTE && op_q == OP_ADD);
+    assign EN_SUB  = (state_q == S_EXECUTE && op_q == OP_SUB);
+    assign EN_MULT = (state_q == S_EXECUTE && op_q == OP_MUL);
+    assign EN_DIV  = (state_q == S_EXECUTE && op_q == OP_DIV);
+    assign DONE    = (state_q == S_DONE);
 endmodule

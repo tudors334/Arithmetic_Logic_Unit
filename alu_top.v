@@ -9,10 +9,10 @@ module alu_top (
     input  wire [1:0]  OP,
     input  wire [7:0]  A,
     input  wire [7:0]  B,
-    output reg  [15:0] RESULT,
-    output reg  [7:0]  REMAINDER,
-    output reg         CARRY_OUT,
-    output reg         OVERFLOW,
+    output wire [15:0] RESULT,
+    output wire [7:0]  REMAINDER,
+    output wire        CARRY_OUT,
+    output wire        OVERFLOW,
     output wire        DONE,
     output wire        DIV_ZERO
 );
@@ -20,16 +20,16 @@ module alu_top (
     wire        EN_SUM, EN_SUB, EN_MULT, EN_DIV;
     wire        mul_done, div_done;
 
-    reg [7:0] regX, regY;
-    always @(posedge CLK) begin
-        if (RST) begin
-            regX <= 8'd0;
-            regY <= 8'd0;
-        end else begin
-            if (LOADX) regX <= A;
-            if (LOADY) regY <= B;
-        end
-    end
+    wire [7:0] regX;
+    wire [7:0] regY;
+    reg_en #(.W(8)) reg_x (
+        .CLK(CLK), .RST(RST), .EN(LOADX),
+        .D(A), .Q(regX)
+    );
+    reg_en #(.W(8)) reg_y (
+        .CLK(CLK), .RST(RST), .EN(LOADY),
+        .D(B), .Q(regY)
+    );
 
     control_unit cu (
         .CLK    (CLK),     .RST    (RST),
@@ -70,55 +70,61 @@ module alu_top (
         .DONE(div_done), .DIV_ZERO(DIV_ZERO)
     );
 
-    reg mul_active;
-    reg div_active;
-    always @(posedge CLK) begin
-        if (RST) begin
-            RESULT     <= 16'd0;
-            REMAINDER  <= 8'd0;
-            CARRY_OUT  <= 1'b0;
-            OVERFLOW   <= 1'b0;
-            mul_active <= 1'b0;
-            div_active <= 1'b0;
-        end else begin
-            CARRY_OUT <= 1'b0;
-            OVERFLOW  <= 1'b0;
+    wire [15:0] result_q;
+    wire [7:0]  remainder_q;
+    wire        mul_active_q;
+    wire        div_active_q;
 
-            if (EN_SUM) begin
-                RESULT     <= {{8{sum_result[7]}}, sum_result};
-                REMAINDER  <= 8'd0;
-                mul_active <= 1'b0;
-                div_active <= 1'b0;
-            end
+    wire [15:0] result_next;
+    wire [7:0]  remainder_next;
+    wire        mul_active_next;
+    wire        div_active_next;
 
-            if (EN_SUB) begin
-                RESULT     <= {{8{sub_result[7]}}, sub_result};
-                REMAINDER  <= 8'd0;
-                mul_active <= 1'b0;
-                div_active <= 1'b0;
-            end
+    assign result_next =
+        EN_SUM ? {{8{sum_result[7]}}, sum_result} :
+        EN_SUB ? {{8{sub_result[7]}}, sub_result} :
+        (mul_active_q && mul_done) ? mul_result :
+        (div_active_q && div_done) ? {8'd0, div_cat} :
+        result_q;
 
-            if (EN_MULT) begin
-                mul_active <= 1'b1;
-                div_active <= 1'b0;
-            end
+    assign remainder_next =
+        (EN_SUM || EN_SUB) ? 8'd0 :
+        (div_active_q && div_done) ? div_rest :
+        remainder_q;
 
-            if (EN_DIV) begin
-                div_active <= 1'b1;
-                mul_active <= 1'b0;
-            end
+    assign mul_active_next =
+        (EN_SUM || EN_SUB) ? 1'b0 :
+        EN_MULT ? 1'b1 :
+        EN_DIV ? 1'b0 :
+        (mul_active_q && mul_done) ? 1'b0 :
+        mul_active_q;
 
-            if (mul_active && mul_done) begin
-                RESULT     <= mul_result;
-                REMAINDER  <= 8'd0;
-                mul_active <= 1'b0;
-            end
+    assign div_active_next =
+        (EN_SUM || EN_SUB) ? 1'b0 :
+        EN_DIV ? 1'b1 :
+        EN_MULT ? 1'b0 :
+        (div_active_q && div_done) ? 1'b0 :
+        div_active_q;
 
-            if (div_active && div_done) begin
-                RESULT     <= {8'd0, div_cat};
-                REMAINDER  <= div_rest;
-                div_active <= 1'b0;
-            end
-        end
-    end
+    reg_en #(.W(16)) result_reg (
+        .CLK(CLK), .RST(RST), .EN(1'b1),
+        .D(result_next), .Q(result_q)
+    );
+    reg_en #(.W(8)) remainder_reg (
+        .CLK(CLK), .RST(RST), .EN(1'b1),
+        .D(remainder_next), .Q(remainder_q)
+    );
+    reg_en #(.W(1)) mul_active_reg (
+        .CLK(CLK), .RST(RST), .EN(1'b1),
+        .D(mul_active_next), .Q(mul_active_q)
+    );
+    reg_en #(.W(1)) div_active_reg (
+        .CLK(CLK), .RST(RST), .EN(1'b1),
+        .D(div_active_next), .Q(div_active_q)
+    );
+
+    assign RESULT    = result_q;
+    assign REMAINDER = remainder_q;
+    assign CARRY_OUT = 1'b0;
+    assign OVERFLOW  = 1'b0;
 endmodule
