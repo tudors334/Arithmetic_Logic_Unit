@@ -17,3 +17,71 @@ add wave /tb_alu_top/DIV_ZERO
 wave zoom full
 
 run -all
+
+=====
+ADDER
+
+project compileall
+vsim work.tb_adder_8bit
+add wave -divider "INPUTS"
+add wave -radix decimal /tb_adder_8bit/A
+add wave -radix decimal /tb_adder_8bit/B
+add wave -radix binary  /tb_adder_8bit/Cin
+add wave -divider "OUTPUTS"
+add wave -radix decimal /tb_adder_8bit/SUM
+add wave -radix binary  /tb_adder_8bit/Cout
+add wave -radix binary  /tb_adder_8bit/Overflow
+wave zoom full
+run -all
+=====
+SUBTRACT
+
+project compileall
+vsim work.tb_subtractor_8bit
+add wave -divider "INPUTS"
+add wave -radix decimal /tb_subtractor_8bit/A
+add wave -radix decimal /tb_subtractor_8bit/B
+add wave -divider "OUTPUTS"
+add wave -radix decimal /tb_subtractor_8bit/DIFF
+add wave -radix binary  /tb_subtractor_8bit/Borrow
+add wave -radix binary  /tb_subtractor_8bit/Overflow
+wave zoom full
+run -all
+=====
+MULTIPLY
+
+project compileall
+vsim work.tb_booth_multiplier
+add wave -divider "CONTROL"
+add wave /tb_booth_multiplier/CLK
+add wave /tb_booth_multiplier/RST
+add wave /tb_booth_multiplier/EN
+add wave /tb_booth_multiplier/DONE
+add wave -divider "INPUTS"
+add wave -radix decimal /tb_booth_multiplier/A
+add wave -radix decimal /tb_booth_multiplier/B
+add wave -divider "OUTPUT"
+add wave -radix decimal /tb_booth_multiplier/RESULT
+wave zoom full
+run -all
+====
+RESTORING
+
+project compileall
+vsim work.tb_restoring_divider
+add wave -divider "CONTROL"
+add wave /tb_restoring_divider/CLK
+add wave /tb_restoring_divider/RST
+add wave /tb_restoring_divider/EN
+add wave /tb_restoring_divider/DONE
+add wave -divider "INPUTS"
+add wave -radix unsigned /tb_restoring_divider/A
+add wave -radix unsigned /tb_restoring_divider/B
+add wave -divider "OUTPUTS"
+add wave -radix unsigned /tb_restoring_divider/CAT
+add wave -radix unsigned /tb_restoring_divider/REST
+add wave /tb_restoring_divider/DIV_ZERO
+wave zoom full
+run -all
+=====
+
