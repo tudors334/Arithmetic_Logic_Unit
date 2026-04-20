@@ -1,2 +1,3 @@
 # Arithmetic_Logic_Unit
 Toate fisierele pentru un ALU functional in Verilog + documentatia
+In cn.zip se afla harta de Minecraft pe care am realizat-o pentru sumator, downnload-abila pentru a putea fi vazuta/jucata de oricine.
