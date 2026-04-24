@@ -1,5 +1,8 @@
 `timescale 1ns/1ps
 
+// Testbench simplu pentru alu_top.
+// Ruleaza cateva exemple (ADD/SUB/MUL in C2 signed, DIV unsigned) si afiseaza
+// valorile atat in binar, cat si ca numere (cu semn unde are sens).
 module tb_alu_top;
     reg         CLK, RST, START;
     reg  [1:0]  OP;
@@ -164,25 +167,22 @@ module tb_alu_top;
         $display("===========================================================");
 
         $display("\n=== ADD (signed C2) ===");
-        run_op(8'd25,  8'd17,  2'b00);  //  25 +  17 =  42
-        run_op(8'd0,    8'd0,  2'b00);  //   0 +   0 =   0
+        run_op(8'd25,  8'd17,  2'b00);  // astept: 25 + 17 = 42
+        run_op(8'd0,    8'd0,  2'b00);  // astept: 0 + 0 = 0
 
         $display("\n=== SUB (signed C2) ===");
-        run_op(8'd50,  8'd18,  2'b01);  //  50 -  18 =  32
-        run_op(8'd5,   8'd10,  2'b01);  //  5  -  10 =  -5
+        run_op(8'd50,  8'd18,  2'b01);  // astept: 50 - 18 = 32
+        run_op(8'd5,   8'd10,  2'b01);  // astept: 5 - 10 = -5
 
         $display("\n=== MUL Booth Radix-2 (signed C2) ===");
-        run_op(8'd6,   8'd7,   2'b10);  //   6 *   7 =   42
-        run_op(8'd12,  8'd12,  2'b10);  //  12 *  12 =  144
+        run_op(8'd6,   8'd7,   2'b10);  // astept: 6 * 7 = 42
+        run_op(8'd12,  8'd12,  2'b10);  // astept: 12 * 12 = 144
 
         $display("\n=== DIV Restoring (unsigned) ===");
-        run_op(8'd48,  8'd8,   2'b11);  // 48/8  = 6 rest 0
-        run_op(8'd7,   8'd3,   2'b11);  // 7/3 = 2 rem 1
-        run_op(8'd0,   8'd0,   2'b11);  // div/0
+        run_op(8'd48,  8'd8,   2'b11);  // astept: 48/8 = 6, rest 0
+        run_op(8'd7,   8'd3,   2'b11);  // astept: 7/3 = 2, rest 1
+        run_op(8'd0,   8'd0,   2'b11);  // astept: impartire la zero
 
-        $display("===========================================================");
-        $display(" Done");
-        $display("===========================================================");
         $finish;
     end
 endmodule

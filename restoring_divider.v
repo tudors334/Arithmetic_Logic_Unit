@@ -1,13 +1,5 @@
-// ============================================================
-// Module: restoring_divider_v2
-// Description: 8-bit unsigned Restoring Division
-// Uses subtractor_8bit (trial) and adder_8bit (restore).
-//
-// Two phases per bit:
-//   Phase 0: shift left {R, Q_reg} by 1
-//   Phase 1: trial subtract R-D; if no borrow keep & Q[0]=1
-//                              ; if borrow restore & Q[0]=0
-// ============================================================
+// restoring_divider_v2: impartire unsigned pe 8 biti (Restoring Division).
+// Ruleaza in 2 faze/bit: shift, apoi trial-subtract (si restore daca e cazul).
 module restoring_divider_v2 (
     input  wire        CLK,
     input  wire        RST,

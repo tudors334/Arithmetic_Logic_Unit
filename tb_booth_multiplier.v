@@ -1,10 +1,5 @@
-// ============================================================
-// Testbench: tb_booth_multiplier
-// Module under test: booth_multiplier (Booth Radix-2, signed C2)
-// Dependinte: full_adder.v, adder_8bit.v, subtractor_8bit.v,
-//             reg_en.v, booth_multiplier.v
-// Simulare: ModelSim -> compile toate, simulate tb_booth_multiplier
-// ============================================================
+// Testbench pentru booth_multiplier.
+// Ruleaza inmultiri cu semn (C2) si compara rezultatul pe 16 biti.
 `timescale 1ns/1ps
 
 module tb_booth_multiplier;
@@ -110,9 +105,6 @@ module tb_booth_multiplier;
         run_mul(8'h80,  8'h80,  16'h4000);    //-128 *-128 = 16384
         run_mul(8'd127, 8'h80,  16'hC080);    // 127 *-128 =-16256
 
-        $display("\n=================================================");
-        $display(" TB booth_multiplier TERMINAT");
-        $display("=================================================");
         $finish;
     end
 

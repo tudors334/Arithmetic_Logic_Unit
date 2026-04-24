@@ -1,7 +1,4 @@
-// ============================================================
-// Module: reg_en
-// Description: Parameterized register with enable and sync reset
-// ============================================================
+// reg_en: registru parametrizabil (W biti) cu enable si reset sincron.
 module reg_en #(
     parameter W = 1
 ) (

@@ -1,9 +1,5 @@
-// ============================================================
-// Module: adder_8bit
-// Description: 8-bit Ripple Carry Adder built from full_adder
-// Inputs : A[7:0], B[7:0], Cin
-// Outputs: SUM[7:0], Cout, Overflow
-// ============================================================
+// adder_8bit: adunator ripple-carry pe 8 biti.
+// Intrari: A, B, Cin. Iesiri: SUM, Cout, Overflow.
 module adder_8bit (
     input  wire [7:0] A,
     input  wire [7:0] B,

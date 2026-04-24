@@ -1,9 +1,5 @@
-// ============================================================
-// Testbench: tb_adder_8bit
-// Module under test: adder_8bit
-// Dependinte: full_adder.v, adder_8bit.v
-// Simulare: ModelSim -> compile toate 3, simulate tb_adder_8bit
-// ============================================================
+// Testbench pentru adder_8bit.
+// Verifica cateva cazuri (cu/ fara carry si overflow).
 `timescale 1ns/1ps
 
 module tb_adder_8bit;
@@ -151,9 +147,6 @@ module tb_adder_8bit;
         A=8'h80;  B=8'h80;  Cin=0; #10;
         show(A,B,Cin,SUM,Cout,Overflow, 8'h00, 1, 1);
 
-        $display("\n=================================================");
-        $display(" TB adder_8bit TERMINAT");
-        $display("=================================================");
         $finish;
     end
 

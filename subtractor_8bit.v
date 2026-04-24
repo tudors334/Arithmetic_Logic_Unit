@@ -1,10 +1,5 @@
-// ============================================================
-// Module: subtractor_8bit
-// Description: 8-bit Subtractor A - B
-//              Implemented as A + (~B) + 1  
-// Inputs : A[7:0], B[7:0]
-// Outputs: DIFF[7:0], Borrow, Overflow
-// ============================================================
+// subtractor_8bit: scazator pe 8 biti (A - B).
+// Implementat ca A + (~B) + 1 (complement fata de 2).
 module subtractor_8bit (
     input  wire [7:0] A,
     input  wire [7:0] B,

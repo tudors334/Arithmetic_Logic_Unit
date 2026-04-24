@@ -1,9 +1,5 @@
-// ============================================================
-// Testbench: tb_subtractor_8bit
-// Module under test: subtractor_8bit
-// Dependinte: full_adder.v, adder_8bit.v, subtractor_8bit.v
-// Simulare: ModelSim -> compile toate, simulate tb_subtractor_8bit
-// ============================================================
+// Testbench pentru subtractor_8bit.
+// Verifica scaderi pozitive/negative, borrow si overflow.
 `timescale 1ns/1ps
 
 module tb_subtractor_8bit;
@@ -140,9 +136,6 @@ module tb_subtractor_8bit;
         A=8'd1;   B=8'd0;   #10;
         show(A,B,DIFF,Borrow,Overflow, 8'd1, 0, 0);
 
-        $display("\n=================================================");
-        $display(" TB subtractor_8bit TERMINAT");
-        $display("=================================================");
         $finish;
     end
 

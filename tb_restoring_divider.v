@@ -1,10 +1,5 @@
-// ============================================================
-// Testbench: tb_restoring_divider
-// Module under test: restoring_divider_v2 (unsigned)
-// Dependinte: full_adder.v, adder_8bit.v, subtractor_8bit.v,
-//             reg_en.v, restoring_divider.v
-// Simulare: ModelSim -> compile toate, simulate tb_restoring_divider
-// ============================================================
+// Testbench pentru restoring_divider_v2.
+// Testeaza impartiri unsigned, inclusiv cazul de impartire la zero.
 `timescale 1ns/1ps
 
 module tb_restoring_divider;
@@ -133,9 +128,6 @@ module tb_restoring_divider;
         run_div(8'd0,   8'd0,   8'd0,   8'd0,  1); //   0/0 -> DIV_ZERO
         run_div(8'd255, 8'd0,   8'd0,   8'd0,  1); // 255/0 -> DIV_ZERO
 
-        $display("\n=================================================");
-        $display(" TB restoring_divider TERMINAT");
-        $display("=================================================");
         $finish;
     end
 

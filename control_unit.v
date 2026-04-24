@@ -1,29 +1,22 @@
-// ============================================================
-// Module: control_unit
-// FSM cu 6 stari pentru ALU
+// control_unit: un FSM mic care orchestreaza operatia ALU.
+// Pe scurt: la START prinde OP, incarca A/B in registre, apoi porneste blocul cerut.
+// Pentru ADD/SUB nu asteapta (rezultatul e combinational), pentru MUL/DIV sta pana
+// primeste semnalul de final de la modulul respectiv.
 //
 // Intrari:
 //   CLK, RST, START, OP[1:0], MUL_RES, DIV_RES
 // Iesiri:
-//   LOADX, LOADY   - incarca operanzii in registrii interni
-//   EN_SUM         - activeaza adder-ul (un ciclu)
-//   EN_SUB         - activeaza subtractor-ul (un ciclu)
-//   EN_MULT        - porneste booth multiplier (un ciclu)
-//   EN_DIV         - porneste restoring divider (un ciclu)
-//   DONE           - semnal de clk 1 ciclu: operatia s-a terminat
+//   LOADX, LOADY  - incarca operanzii in registrele interne
+//   EN_SUM/EN_SUB - pulse de 1 ciclu pentru add/sub
+//   EN_MULT/EN_DIV- pulse de 1 ciclu care pornesc mul/div
+//   DONE          - 1 ciclu cand operatia s-a incheiat
 //
-// Starile:
-//   S_IDLE     : Asteapta semnalul START.
-//   S_LOAD     : Semnaleaza LOADX si LOADY la un ciclu pentru a incarca
-//                operanzii A si B in registrii interni regX, regY.
-//   S_EXECUTE  : Decodifica OP si seteaza EN-ul corespunzator.
-//                - ADD/SUB: rezultat combinational, merge direct in S_DONE.
-//                - MUL: aserteza EN_MULT un ciclu, trece in S_WAIT_MUL.
-//                - DIV: aserteza EN_DIV un ciclu, trece in S_WAIT_DIV.
-//   S_WAIT_MUL : Asteapta semnalul DONE de la booth_multiplier.
-//   S_WAIT_DIV : Asteapta semnalul DONE de la restoring_divider_v2.
-//   S_DONE     : Seteaza DONE un ciclu, revine in S_IDLE.
-// ============================================================
+// Stari (pe inteles):
+//   S_IDLE     asteapta START
+//   S_LOAD     pulseaza LOADX/LOADY ca sa prinda A/B
+//   S_EXECUTE  decide dupa OP: direct DONE (ADD/SUB) sau WAIT (MUL/DIV)
+//   S_WAIT_*   asteapta MUL_RES / DIV_RES
+//   S_DONE     pulseaza DONE si revine in IDLE
 module control_unit (
     input  wire        CLK,
     input  wire        RST,

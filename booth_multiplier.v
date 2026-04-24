@@ -1,21 +1,5 @@
-// ============================================================
-// Module: booth_multiplier
-// Algoritm: Booth Radix-2 
-// Intrari: A, B  (8-bit signed C2)
-// Iesire : RESULT (16-bit signed C2)
-//
-// Algoritmul Booth Radix-2:
-//   Initializam ACC=0, Q=B (multiplier), Q_prev=0.
-//   La fiecare din cele 8 pasi examinam perechea (Q[0], Q_prev):
-//     01        -> ACC = ACC + M   (M = A, multiplicand)
-//     10        -> ACC = ACC - M   (folosim subtractor_8bit)
-//   Dupa operatie, shift aritmetic dreapta {ACC, Q, Q_prev} cu 1.
-//   Rezultat final: {ACC[7:0], Q} = produs pe 16 biti (C2).
-//
-// Implementare: doua faze per pas:
-//   Phase 0: operatia Booth pe ACC
-//   Phase 1: shift aritmetic dreapta
-// ============================================================
+// booth_multiplier: inmultire signed (C2) pe 8 biti cu Booth radix-2.
+// La fiecare pas decide +M / -M / nimic din {Q[0], Q_prev}, apoi face shift.
 module booth_multiplier (
     input  wire        CLK,
     input  wire        RST,

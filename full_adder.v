@@ -1,7 +1,4 @@
-// ============================================================
-// Module: full_adder
-// Description: 1-bit Full Adder
-// ============================================================
+// full_adder: adunator pe 1 bit (sum si carry).
 module full_adder (
     input  wire a,
     input  wire b,

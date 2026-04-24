@@ -1,7 +1,9 @@
-// ============================================================
-// Module: alu_top
-// OP: 00=ADD, 01=SUB, 10=MUL(Booth R2 signed C2), 11=DIV(Restoring unsigned)
-// ============================================================
+// alu_top = "ambalajul" ALU-ului: incarca A/B in registre si alege blocul potrivit.
+// OP:
+//   00 -> ADD (C2 signed)
+//   01 -> SUB (C2 signed)
+//   10 -> MUL (Booth radix-2, signed)
+//   11 -> DIV (Restoring, unsigned)
 module alu_top (
     input  wire        CLK,
     input  wire        RST,
